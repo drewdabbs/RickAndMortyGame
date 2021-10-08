@@ -19,6 +19,7 @@ namespace RickAndMortyGame
             "Obvious exits are DRIVEWAY and HOUSE\n",
             new List<string> { "driveway", "house" }
             );
+        // Note on the EFA module for this, pt 1.1 omits the variable type declaration, <string>, each time this List is implemented breaking the code. Not a pleasant Google search.
         public static Room driveway = new Room(
             "\n\n\n\n\nYou're in the driveway. The car is gone but " +
             "the oil stain is still there.\n\n" +
@@ -47,22 +48,36 @@ namespace RickAndMortyGame
                 Console.Clear();
                 Console.WriteLine(currentRoom.Splash);
                 string command = Console.ReadLine().ToLower();
-                
+
                 if (command.StartsWith("go ") || command.StartsWith("exit "))
                 {
-                    if (command.Contains("garage"))
+                    foreach (string exit in currentRoom.Exits)
                     {
-                        currentRoom = garage;
+                        if (command.Contains(exit) && Rooms.ContainsKey(exit))
+                        {
+                            currentRoom = Rooms[exit];
+                            foundExit = true;
+                            // foundExit has not been implemented as a bool as of pt 1.2, may be corrected later
+                            break;
+                        }
                     }
-                    else if (command.Contains("driveway"))
+                    if (!foundExit)
                     {
-                        currentRoom = driveway;
+                        Console.WriteLine("Uh... Go Where?");
                     }
-                    else if (command.Contains("house"))
-                    {
-                        currentRoom = house;
-                    }
-                    Console.WriteLine("Uh... Go Where?");
+                    //if (command.Contains("garage"))
+                    //{
+                    //    currentRoom = garage;
+                    //}
+                    //else if (command.Contains("driveway"))
+                    //{
+                    //    currentRoom = driveway;
+                    //}
+                    //else if (command.Contains("house"))
+                    //{
+                    //    currentRoom = house;
+                    //}
+                    //Console.WriteLine("Uh... Go Where?");
                 }
                 else if (command.StartsWith("get ") || command.StartsWith("take ") || command.StartsWith("grab"))
                 {
