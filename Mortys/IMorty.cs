@@ -10,7 +10,7 @@ namespace RickAndMortyGame.Mortys
     {
         int Health { get; }
         void Scream();
-        void Hurt(int damage);
-        int Attack();
+        void Hurt(Attack attack);
+        Attack Attack();
     }
 }

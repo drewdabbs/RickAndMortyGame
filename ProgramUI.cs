@@ -57,6 +57,8 @@ namespace RickAndMortyGame
 
                 if (command.StartsWith("go ") || command.StartsWith("exit "))
                 {
+                    bool foundExit = false;
+                    // EFA -- This bool was not in the instruction, I added it so I could test without errors. As of module 2.2 this if and foreach is not implemented, nor does the conditional restrict player 'movement' as described. Typing the statements 'go' or 'exit' still places the user in any room stated.
                     foreach (string exit in currentRoom.Exits)
                     {
                         if (command.Contains(exit) && Rooms.ContainsKey(exit))
@@ -71,19 +73,19 @@ namespace RickAndMortyGame
                     {
                         Console.WriteLine("Uh... Go Where?");
                     }
-                    //if (command.Contains("garage"))
-                    //{
-                    //    currentRoom = garage;
-                    //}
-                    //else if (command.Contains("driveway"))
-                    //{
-                    //    currentRoom = driveway;
-                    //}
-                    //else if (command.Contains("house"))
-                    //{
-                    //    currentRoom = house;
-                    //}
-                    //Console.WriteLine("Uh... Go Where?");
+                    if (command.Contains("garage"))
+                    {
+                        currentRoom = garage;
+                    }
+                    else if (command.Contains("driveway"))
+                    {
+                        currentRoom = driveway;
+                    }
+                    else if (command.Contains("house"))
+                    {
+                        currentRoom = house;
+                    }
+                    Console.WriteLine("Uh... Go Where?");
                 }
                 else if (command.StartsWith("get ") || command.StartsWith("take ") || command.StartsWith("grab"))
                 {
@@ -98,14 +100,14 @@ namespace RickAndMortyGame
                             switch (flavorTextChoice)
                             {
                                 case 0:
-                                    flavorText = "Don't lose it";
+                                    flavorText = "Don't lose it! ";
                                     break;
                                 case 1:
-                                    flavorText = "Good on you";
+                                    flavorText = "Good on you! ";
                                     break;
                                 case 2:
                                 default:
-                                    flavorText = "Fantastic";
+                                    flavorText = "Fantastic! ";
                                     break;
                             }
                             Console.WriteLine($"You found a(n) {item}. {flavorText}" +
@@ -118,6 +120,7 @@ namespace RickAndMortyGame
                         }
                     }
                     if (!foundItem)
+                        // EFA thus far, unless I missed a step, (!foundItem) does not fire the Console.WriteLine
                     {
                         Console.WriteLine( "I don't know what you are talking about.");
                     }
