@@ -15,13 +15,23 @@ namespace RickAndMortyGame
         {
             {"garage", garage },
             {"house", house },
-            {"driveway", driveway }
+            {"driveway", driveway },
+            {"laboratory", lab },
+            {"lab", lab }
+            // EFA -- Minor but module 3.2 lists this line of code ending in a comma as if another line of code followed, so is not needed.
         };
         public static Room garage = new Room(
             "\n\n\n\n\nYou're in the garage with all your junk and crap\n\n" +
             "Obvious exits are DRIVEWAY and HOUSE\n",
             new List<string> { "driveway", "house" },
-            new List<Item> { Item.plumbus }
+            new List<Item> { Item.plumbus },
+            new List<Event> {
+                new Event(
+                    "control panel",
+                    EventType.Use,
+                    new Result("laboratory", "You've opened the hatch to you LABORATORY.")
+                    )
+            }
             );
         // EFA -- The module pt 1.1 omits the variable type declaration, <string>, each time this List is implemented breaking the code. Not a pleasant Google search.
         public static Room driveway = new Room(
@@ -29,14 +39,24 @@ namespace RickAndMortyGame
             "the oil stain is still there.\n\n" +
             "Obvious exits are GARAGE and YARD\n",
             new List<string> { "garage" },
-            new List<Item> { }
+            new List<Item> { },
+            new List<Event> { }
             );
         public static Room house = new Room(
             "\n\n\n\n\nYou're in the house now. It's drab and smells like \n" +
             "lemon pine-sol with a hint of stale fart.\n\n" +
             "Obvious exits are GARAGE and KITCHEN\n",
             new List<string> { "garage" },
-            new List<Item> { }
+            new List<Item> { },
+            new List<Event> { }
+            );
+        public static Room lab = new Room(
+            "\n\n\n\n\n)You've entered your secret lab under the garage." +
+            "It's way nicer than the rest of the house.\n\n" +
+            "Obvious exits are GARAGE\n",
+            new List<string> { "garage" },
+            new List<Item> { },
+            new List<Event> { }
             );
 
         public void Run()
@@ -127,7 +147,30 @@ namespace RickAndMortyGame
                 }
                 else if (command.StartsWith("use ") || command.StartsWith("activate"))
                 {
-                    Console.WriteLine("I doubt you know how.");
+                    string eventMessage = "I doubt you know how.";
+                    foreach (Event roomEvent in Room.Events)
+                    {
+                        if(!command.Contains(roomEvent.TriggerPhrase) || roomEvent.Type != EventType.Use)
+                        {
+                            continue;
+                        }
+                        if(roomEvent.EventResult.Type == ResultType.NewExit)
+                            // EFA -- ResultType is not found in the Class 'Result' since it is an enum and is declared in the namespace. Since the namespace is already the same, the enum can be called directly. This happens a couple times below.
+                        {
+                            Room.AddExit(roomEvent.EventResult.ResultDestination);
+                            eventMessage = roomEvent.EventResult.ResultMessage;
+                        }
+                        else if(roomEvent.EventResult.Type == ResultType.GetItem)
+                        {
+                            inventory.Add(roomEvent.EventResult.ResultItem);
+                            eventMessage = roomEvent.EventResult.ResultMessage;
+                        }
+                        else if(roomEvent.EventResult.Type == ResultType.MessageOnly)
+                        {
+                            eventMessage = roomEvent.EventResult.ResultMessage;
+                        }
+                    }
+                    Console.WriteLine(eventMessage);
                 }
                 else
                 {

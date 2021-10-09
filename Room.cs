@@ -18,11 +18,20 @@ namespace RickAndMortyGame
         }
         public string Splash { get; }
         public List<string> Exits { get; }
-        public Room(string splash, List<string> exits, List<Item> items)
+        public List<Event> Events { get; }
+        public Room(string splash, List<string> exits, List<Item> items, List<Event> events)
         {
             Splash = splash;
             Exits = exits;
             Items = items;
+            Events = events;
+        }
+        public void ResolveEvent(Event resolvedEvent)
+        {
+            if (Events.Contains(resolvedEvent))
+            {
+                Events.Remove(resolvedEvent);
+            }
         }
     }
 }
